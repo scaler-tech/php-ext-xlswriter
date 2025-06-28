@@ -6,10 +6,7 @@
 #                      \___/_/\_\ .__/ \__,_|\__|
 #                               |_| XML parser
 #
-# Copyright (c) 2017-2024 Sebastian Pipping <sebastian@pipping.org>
-# Copyright (c) 2017      Stephen Groat <stephen@groat.us>
-# Copyright (c) 2017      Joe Orton <jorton@redhat.com>
-# Copyright (c) 2024      Tomas Korbar <tkorbar@redhat.com>
+# Copyright (c) 2017 Expat development team
 # Licensed under the MIT license:
 #
 # Permission is  hereby granted,  free of charge,  to any  person obtaining
@@ -33,27 +30,30 @@
 
 .PHONY: dist-hook  # not inside conditional to avoid automake warning
 
-if WITH_MANPAGE
+if WITH_DOCBOOK
 dist_man_MANS = xmlwf.1
 
 xmlwf.1: xmlwf.xml
 	-rm -f $@
-	test "x$(DOCBOOK_TO_MAN)" != x && $(DOCBOOK_TO_MAN) $<
+	$(DOCBOOK_TO_MAN) $<
 	test -f $@ || mv XMLWF.1 $@
-endif
-
-if !WITH_DISTRIBUTABLE_MANPAGE
+else
 dist-hook:
 	@echo 'ERROR: Configure with --with-docbook for "make dist".' 1>&2
 	@false
 endif
 
-if !WITH_PREBUILT_MANPAGE
-CLEANFILES = xmlwf.1
-endif
+# https://www.gnu.org/software/automake/manual/automake.html#What-Gets-Cleaned
+.PHONY: clean-local
+clean-local: clean-local-check
+
+.PHONY: clean-local-check
+clean-local-check:
+	$(RM) xmlwf.1
 
 EXTRA_DIST = \
-    ok.min.css \
+    expat.png \
     reference.html \
     style.css \
+    valid-xhtml10.png \
     xmlwf.xml

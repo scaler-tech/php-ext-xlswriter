@@ -1,8 +1,5 @@
 /* expat_config.h.cmake.  Based upon generated expat_config.h.in.  */
 
-#ifndef EXPAT_CONFIG_H
-#define EXPAT_CONFIG_H 1
-
 /* 1234 = LIL_ENDIAN, 4321 = BIGENDIAN */
 #cmakedefine BYTEORDER @BYTEORDER@
 
@@ -60,63 +57,55 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #cmakedefine HAVE_UNISTD_H
 
-/* Name of package */
-#define PACKAGE "@PACKAGE_NAME@"
-
 /* Define to the address where bug reports for this package should be sent. */
-#cmakedefine PACKAGE_BUGREPORT "@PACKAGE_BUGREPORT@"
+#cmakedefine PACKAGE_BUGREPORT
 
 /* Define to the full name of this package. */
-#cmakedefine PACKAGE_NAME "@PACKAGE_NAME@"
+#cmakedefine PACKAGE_NAME
 
 /* Define to the full name and version of this package. */
-#cmakedefine PACKAGE_STRING "@PACKAGE_STRING@"
+#cmakedefine PACKAGE_STRING
 
 /* Define to the one symbol short name of this package. */
-#cmakedefine PACKAGE_TARNAME "@PACKAGE_TARNAME@"
-
-/* Define to the home page for this package. */
-#define PACKAGE_URL ""
+#cmakedefine PACKAGE_TARNAME
 
 /* Define to the version of this package. */
-#cmakedefine PACKAGE_VERSION "@PACKAGE_VERSION@"
+#cmakedefine PACKAGE_VERSION
 
 /* Define to 1 if you have the ANSI C header files. */
-#ifndef STDC_HEADERS
 #cmakedefine STDC_HEADERS
-#endif
 
 /* whether byteorder is bigendian */
 #cmakedefine WORDS_BIGENDIAN
 
-/* Define to allow retrieving the byte offsets for attribute names and values.
- */
-#cmakedefine XML_ATTR_INFO
-
 /* Define to specify how much context to retain around the current parse
-   point, 0 to disable. */
-#define XML_CONTEXT_BYTES @XML_CONTEXT_BYTES@
-
-#if ! defined(_WIN32)
-/* Define to include code reading entropy from `/dev/urandom'. */
-#cmakedefine XML_DEV_URANDOM
-#endif
+   point. */
+#cmakedefine XML_CONTEXT_BYTES @XML_CONTEXT_BYTES@
 
 /* Define to make parameter entity parsing functionality available. */
 #cmakedefine XML_DTD
 
-/* Define as 1/0 to enable/disable support for general entities. */
-#define XML_GE @XML_GE@
-
 /* Define to make XML Namespaces functionality available. */
 #cmakedefine XML_NS
 
+#if ! defined(_WIN32)
+/* Define to extract entropy from /dev/urandom. */
+#cmakedefine XML_DEV_URANDOM
+#endif
+
+/* Define to use UTF-16 chars (two bytes). */
+#cmakedefine XML_UNICODE
+
+/* Define to use wchar_t as UTF-16 char type instead of unsigned short. */
+#cmakedefine XML_UNICODE_WCHAR_T
+
 /* Define to __FUNCTION__ or "" if `__func__' does not conform to ANSI C. */
 #ifdef _MSC_VER
-#  define __func__ __FUNCTION__
+# define __func__ __FUNCTION__
 #endif
 
 /* Define to `long' if <sys/types.h> does not define. */
-#cmakedefine off_t @off_t@
+#cmakedefine off_t @OFF_T@
 
-#endif // ndef EXPAT_CONFIG_H
+/* Define to `unsigned' if <sys/types.h> does not define. */
+#cmakedefine size_t @SIZE_T@

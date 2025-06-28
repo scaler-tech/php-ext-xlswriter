@@ -16,6 +16,10 @@
 #include "xlsxwriter/common.h"
 #include "xlsxwriter/third_party/tmpfileplus.h"
 
+#ifdef USE_DTOA_LIBRARY
+#include "xlsxwriter/third_party/emyg_dtoa.h"
+#endif
+
 char *error_strings[LXW_MAX_ERRNO + 1] = {
     "No error.",
     "Memory error, failed to malloc() required memory.",
@@ -424,7 +428,7 @@ lxw_datetime_to_excel_datetime(lxw_datetime *datetime)
  * 1900 epoch.
  */
 double
-lxw_unixtime_to_excel_date(time_t unixtime)
+lxw_unixtime_to_excel_date(int64_t unixtime)
 {
     return lxw_unixtime_to_excel_date_epoch(unixtime, LXW_FALSE);
 }
@@ -434,7 +438,7 @@ lxw_unixtime_to_excel_date(time_t unixtime)
  * 1900 or 1904 epoch.
  */
 double
-lxw_unixtime_to_excel_date_epoch(time_t unixtime, uint8_t date_1904)
+lxw_unixtime_to_excel_date_epoch(int64_t unixtime, uint8_t date_1904)
 {
     double excel_datetime = 0.0;
     int epoch = date_1904 ? 24107.0 : 25568.0;
@@ -575,27 +579,14 @@ lxw_tmpfile(char *tmpdir)
 }
 
 /*
- * Sample function to handle sprintf of doubles for locale portable code. This
- * is usually handled by a lxw_sprintf_dbl() macro but it can be replaced with
- * a function of the same name.
- *
- * The code below is a simplified example that changes numbers like 123,45 to
- * 123.45. End-users can replace this with something more rigorous if
- * required.
+ * Use third party function to handle sprintf of doubles for locale portable
+ * code.
  */
-#ifdef USE_DOUBLE_FUNCTION
+#ifdef USE_DTOA_LIBRARY
 int
 lxw_sprintf_dbl(char *data, double number)
 {
-    char *tmp;
-
-    lxw_snprintf(data, LXW_ATTR_32, "%.16g", number);
-
-    /* Replace comma with decimal point. */
-    tmp = strchr(data, ',');
-    if (tmp)
-        *tmp = '.';
-
+    emyg_dtoa(number, data);
     return 0;
 }
 #endif

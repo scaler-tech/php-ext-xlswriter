@@ -7,14 +7,7 @@
                                  |_| XML parser
 
    Copyright (c) 1997-2000 Thai Open Source Software Center Ltd
-   Copyright (c) 2000      Clark Cooper <coopercc@users.sourceforge.net>
-   Copyright (c) 2001-2004 Fred L. Drake, Jr. <fdrake@users.sourceforge.net>
-   Copyright (c) 2002-2009 Karl Waclawek <karl@waclawek.net>
-   Copyright (c) 2016-2017 Sebastian Pipping <sebastian@pipping.org>
-   Copyright (c) 2017      Rhodri James <rhodri@wildebeest.org.uk>
-   Copyright (c) 2017      Franek Korta <fkorta@gmail.com>
-   Copyright (c) 2022      Sean McBride <sean@rogue-research.com>
-   Copyright (c) 2025      Hanno Böck <hanno@gentoo.org>
+   Copyright (c) 2000-2017 Expat development team
    Licensed under the MIT license:
 
    Permission is  hereby granted,  free of charge,  to any  person obtaining
@@ -44,40 +37,40 @@
 #include <stdio.h>
 
 /* Functions close(2) and read(2) */
-#if ! defined(_WIN32) && ! defined(_WIN64)
-#  include <unistd.h>
+#if !defined(_WIN32) && !defined(_WIN64)
+# include <unistd.h>
 #endif
 
 /* Function "read": */
 #if defined(_MSC_VER)
-#  include <io.h>
-/* https://msdn.microsoft.com/en-us/library/wyssk1bs(v=vs.100).aspx */
-#  define EXPAT_read _read
-#  define EXPAT_read_count_t int
-#  define EXPAT_read_req_t unsigned int
-#else /* POSIX */
-/* https://pubs.opengroup.org/onlinepubs/009695399/functions/read.html */
-#  define EXPAT_read read
-#  define EXPAT_read_count_t ssize_t
-#  define EXPAT_read_req_t size_t
+# include <io.h>
+  /* https://msdn.microsoft.com/en-us/library/wyssk1bs(v=vs.100).aspx */
+# define _EXPAT_read          _read
+# define _EXPAT_read_count_t  int
+# define _EXPAT_read_req_t    unsigned int
+#else  /* POSIX */
+  /* http://pubs.opengroup.org/onlinepubs/009695399/functions/read.html */
+# define _EXPAT_read          read
+# define _EXPAT_read_count_t  ssize_t
+# define _EXPAT_read_req_t    size_t
 #endif
 
 #ifndef S_ISREG
-#  ifndef S_IFREG
-#    define S_IFREG _S_IFREG
-#  endif
-#  ifndef S_IFMT
-#    define S_IFMT _S_IFMT
-#  endif
-#  define S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
+# ifndef S_IFREG
+#  define S_IFREG _S_IFREG
+# endif
+# ifndef S_IFMT
+#  define S_IFMT _S_IFMT
+# endif
+# define S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
 #endif /* not S_ISREG */
 
 #ifndef O_BINARY
-#  ifdef _O_BINARY
-#    define O_BINARY _O_BINARY
-#  else
-#    define O_BINARY 0
-#  endif
+# ifdef _O_BINARY
+#  define O_BINARY _O_BINARY
+# else
+#  define O_BINARY 0
+# endif
 #endif
 
 #include "xmltchar.h"
@@ -86,14 +79,15 @@
 int
 filemap(const tchar *name,
         void (*processor)(const void *, size_t, const tchar *, void *arg),
-        void *arg) {
+        void *arg)
+{
   size_t nbytes;
   int fd;
-  EXPAT_read_count_t n;
+  _EXPAT_read_count_t n;
   struct stat sb;
   void *p;
 
-  fd = topen(name, O_RDONLY | O_BINARY);
+  fd = topen(name, O_RDONLY|O_BINARY);
   if (fd < 0) {
     tperror(name);
     return 0;
@@ -103,14 +97,14 @@ filemap(const tchar *name,
     close(fd);
     return 0;
   }
-  if (! S_ISREG(sb.st_mode)) {
+  if (!S_ISREG(sb.st_mode)) {
     ftprintf(stderr, T("%s: not a regular file\n"), name);
     close(fd);
     return 0;
   }
   if (sb.st_size > XML_MAX_CHUNK_LEN) {
     close(fd);
-    return 2; /* Cannot be passed to XML_Parse in one go */
+    return 2;  /* Cannot be passed to XML_Parse in one go */
   }
 
   nbytes = sb.st_size;
@@ -122,19 +116,19 @@ filemap(const tchar *name,
     return 1;
   }
   p = malloc(nbytes);
-  if (! p) {
+  if (!p) {
     ftprintf(stderr, T("%s: out of memory\n"), name);
     close(fd);
     return 0;
   }
-  n = EXPAT_read(fd, p, (EXPAT_read_req_t)nbytes);
+  n = _EXPAT_read(fd, p, (_EXPAT_read_req_t)nbytes);
   if (n < 0) {
     tperror(name);
     free(p);
     close(fd);
     return 0;
   }
-  if (n != (EXPAT_read_count_t)nbytes) {
+  if (n != (_EXPAT_read_count_t)nbytes) {
     ftprintf(stderr, T("%s: read unexpected number of bytes\n"), name);
     free(p);
     close(fd);

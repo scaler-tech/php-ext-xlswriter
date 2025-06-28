@@ -50,7 +50,10 @@ enum lxw_boolean {
     /** False value. */
     LXW_FALSE,
     /** True value. */
-    LXW_TRUE
+    LXW_TRUE,
+    /** False value. Used to turn off a property that is default on, in order
+     *  to distinguish it from an uninitialized value. */
+    LXW_EXPLICIT_FALSE
 };
 
 /**
@@ -289,6 +292,9 @@ enum lxw_custom_property_types {
 
 #define LXW_WARN_FORMAT2(message, var1, var2)    \
     LXW_PRINTF(LXW_STDERR "[WARNING]: " message "\n", var1, var2)
+
+#define LXW_WARN_FORMAT3(message, var1, var2, var3) \
+    LXW_PRINTF(LXW_STDERR "[WARNING]: " message "\n", var1, var2, var3)
 
 /* Chart axis type checks. */
 #define LXW_WARN_CAT_AXIS_ONLY(function)                                   \

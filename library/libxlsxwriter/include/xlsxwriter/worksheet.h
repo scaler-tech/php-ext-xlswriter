@@ -536,6 +536,67 @@ enum lxw_conditional_icon_types {
     LXW_CONDITIONAL_ICONS_5_QUARTERS
 };
 
+/** @brief The criteria used in autofilter rules.
+ *
+ * Criteria used to define an autofilter rule condition.
+ */
+enum lxw_filter_criteria {
+    LXW_FILTER_CRITERIA_NONE,
+
+    /** Filter cells equal to a value. */
+    LXW_FILTER_CRITERIA_EQUAL_TO,
+
+    /** Filter cells not equal to a value. */
+    LXW_FILTER_CRITERIA_NOT_EQUAL_TO,
+
+    /** Filter cells greater than a value. */
+    LXW_FILTER_CRITERIA_GREATER_THAN,
+
+    /** Filter cells less than a value. */
+    LXW_FILTER_CRITERIA_LESS_THAN,
+
+    /** Filter cells greater than or equal to a value. */
+    LXW_FILTER_CRITERIA_GREATER_THAN_OR_EQUAL_TO,
+
+    /** Filter cells less than or equal to a value. */
+    LXW_FILTER_CRITERIA_LESS_THAN_OR_EQUAL_TO,
+
+    /** Filter cells that are blank. */
+    LXW_FILTER_CRITERIA_BLANKS,
+
+    /** Filter cells that are not blank. */
+    LXW_FILTER_CRITERIA_NON_BLANKS
+};
+
+/**
+ * @brief And/or operator when using 2 filter rules.
+ *
+ * And/or operator conditions when using 2 filter rules with
+ * worksheet_filter_column2(). In general LXW_FILTER_OR is used with
+ * LXW_FILTER_CRITERIA_EQUAL_TO and LXW_FILTER_AND is used with the other
+ * filter criteria.
+ */
+enum lxw_filter_operator {
+    /** Logical "and" of 2 filter rules. */
+    LXW_FILTER_AND,
+
+    /** Logical "or" of 2 filter rules. */
+    LXW_FILTER_OR
+};
+
+/* Internal filter types.*/
+enum lxw_filter_type {
+    LXW_FILTER_TYPE_NONE,
+
+    LXW_FILTER_TYPE_SINGLE,
+
+    LXW_FILTER_TYPE_AND,
+
+    LXW_FILTER_TYPE_OR,
+
+    LXW_FILTER_TYPE_STRING_LIST
+};
+
 /** Options to control the positioning of worksheet objects such as images
  *  or charts. See @ref working_with_object_positioning. */
 enum lxw_object_position {
@@ -772,6 +833,7 @@ typedef struct lxw_print_area {
 
 typedef struct lxw_autofilter {
     uint8_t in_use;
+    uint8_t has_rules;
     lxw_row_t first_row;
     lxw_row_t last_row;
     lxw_col_t first_col;
@@ -1263,6 +1325,44 @@ typedef struct lxw_cond_format_hash_element {
 } lxw_cond_format_hash_element;
 
 /**
+ * @brief Options for autofilter rules.
+ *
+ * Options to define an autofilter rule.
+ *
+ */
+typedef struct lxw_filter_rule {
+
+    /** The #lxw_filter_criteria to define the rule. */
+    uint8_t criteria;
+
+    /** String value to which the criteria applies. */
+    char *value_string;
+
+    /** Numeric value to which the criteria applies (if value_string isn't used). */
+    double value;
+
+} lxw_filter_rule;
+
+typedef struct lxw_filter_rule_obj {
+
+    uint8_t type;
+    uint8_t is_custom;
+    uint8_t has_blanks;
+    lxw_col_t col_num;
+
+    uint8_t criteria1;
+    uint8_t criteria2;
+    double value1;
+    double value2;
+    char *value1_string;
+    char *value2_string;
+
+    uint16_t num_list_filters;
+    char **list;
+
+} lxw_filter_rule_obj;
+
+/**
  * @brief Options for inserted images.
  *
  * Options for modifying images inserted via `worksheet_insert_image_opt()`.
@@ -1330,6 +1430,18 @@ typedef struct lxw_chart_options {
     /** Object position - use one of the values of #lxw_object_position.
      *  See @ref working_with_object_positioning.*/
     uint8_t object_position;
+
+    /** Optional description or "Alt text" for the chart. This field can be
+     *  used to provide a text description of the chart to help
+     *  accessibility. Defaults to the image filename as in Excel. Set to NULL
+     *  to ignore the description field. */
+    char *description;
+
+    /** Optional parameter to help accessibility. It is used to mark the chart
+     *  as decorative, and thus uninformative, for automated screen
+     *  readers. As in Excel, if this parameter is in use the `description`
+     *  field isn't written. */
+    uint8_t decorative;
 
 } lxw_chart_options;
 
@@ -1789,6 +1901,9 @@ typedef struct lxw_worksheet {
     lxw_object_properties *footer_right_object_props;
     lxw_object_properties *background_image;
 
+    lxw_filter_rule_obj **filter_rules;
+    lxw_col_t num_filter_rules;
+
     STAILQ_ENTRY (lxw_worksheet) list_pointers;
 
 } lxw_worksheet;
@@ -2241,12 +2356,17 @@ lxw_error worksheet_write_datetime(lxw_worksheet *worksheet,
  *
  * @image html date_example03.png
  *
+ * Unixtime is generally represented with a 32 bit `time_t` type which has a
+ * range of approximately 1900-12-14 to 2038-01-19. To access the full Excel
+ * date range of 1900-01-01 to 9999-12-31 this function uses a 64 bit
+ * parameter.
+ *
  * See @ref working_with_dates for more information about handling dates and
  * times in libxlsxwriter.
  */
 lxw_error worksheet_write_unixtime(lxw_worksheet *worksheet,
                                    lxw_row_t row,
-                                   lxw_col_t col, time_t unixtime,
+                                   lxw_col_t col, int64_t unixtime,
                                    lxw_format *format);
 
 /**
@@ -3494,7 +3614,7 @@ lxw_error worksheet_merge_range(lxw_worksheet *worksheet, lxw_row_t first_row,
  * range of worksheet data. This allows users to filter the data based on
  * simple criteria so that some data is shown and some is hidden.
  *
- * @image html autofilter.png
+ * @image html autofilter3.png
  *
  * To add an autofilter to a worksheet:
  *
@@ -3505,12 +3625,145 @@ lxw_error worksheet_merge_range(lxw_worksheet *worksheet, lxw_row_t first_row,
  *     worksheet_autofilter(worksheet, RANGE("A1:D51"));
  * @endcode
  *
- * Note: it isn't currently possible to apply filter conditions to the
- * autofilter.
+ * In order to apply a filter condition it is necessary to add filter rules to
+ * the columns using either the `%worksheet_filter_column()`,
+ * `%worksheet_filter_column2()` or `%worksheet_filter_list()` functions:
+ *
+ * - `worksheet_filter_column()`: filter on a single criterion such as "Column ==
+ *   East". More complex conditions such as "<=" or ">=" can also be use.
+ *
+ * - `worksheet_filter_column2()`: filter on two criteria such as "Column == East
+ *   or Column == West". Complex conditions can also be used.
+ *
+ * - `worksheet_filter_list()`: filter on a list of values such as "Column in (East, West,
+ *   North)".
+ *
+ * These functions are explained below. It isn't sufficient to just specify
+ * the filter condition. You must also hide any rows that don't match the
+ * filter condition. See @ref ww_autofilters_data for more details.
+ *
  */
 lxw_error worksheet_autofilter(lxw_worksheet *worksheet, lxw_row_t first_row,
                                lxw_col_t first_col, lxw_row_t last_row,
                                lxw_col_t last_col);
+
+/**
+ * @brief Write a filter rule to an autofilter column.
+ *
+ * @param worksheet Pointer to a lxw_worksheet instance to be updated.
+ * @param col       The column in the autofilter that the rule applies to.
+ * @param rule      The lxw_filter_rule autofilter rule.
+ *
+ * @return A #lxw_error code.
+ *
+ * The `worksheet_filter_column` function can be used to filter columns in a
+ * autofilter range based on single rule conditions:
+ *
+ * @code
+ *     lxw_filter_rule filter_rule = {.criteria     = LXW_FILTER_CRITERIA_EQUAL_TO,
+ *                                    .value_string = "East"};
+ *
+ *    worksheet_filter_column(worksheet, 0, &filter_rule);
+ *@endcode
+ *
+ * @image html autofilter4.png
+ *
+ * The rules and criteria are explained in more detail in @ref
+ * ww_autofilters_criteria in @ref working_with_autofilters.
+ *
+ * The `col` parameter is a zero indexed column number and must refer to a
+ * column in an existing autofilter created with `worksheet_autofilter()`.
+ *
+ * It isn't sufficient to just specify the filter condition. You must also
+ * hide any rows that don't match the filter condition. See @ref
+ * ww_autofilters_data for more details.
+ */
+lxw_error worksheet_filter_column(lxw_worksheet *worksheet, lxw_col_t col,
+                                  lxw_filter_rule *rule);
+
+/**
+ * @brief Write two filter rules to an autofilter column.
+ *
+ * @param worksheet Pointer to a lxw_worksheet instance to be updated.
+ * @param col       The column in the autofilter that the rules applies to.
+ * @param rule1     First lxw_filter_rule autofilter rule.
+ * @param rule2     Second lxw_filter_rule autofilter rule.
+ * @param and_or    A #lxw_filter_operator and/or operator.
+ *
+ * @return A #lxw_error code.
+ *
+ * The `worksheet_filter_column2` function can be used to filter columns in a autofilter
+ * range based on two rule conditions:
+ *
+ * @code
+ *     lxw_filter_rule filter_rule1 = {.criteria     = LXW_FILTER_CRITERIA_EQUAL_TO,
+ *                                     .value_string = "East"};
+ *
+ *     lxw_filter_rule filter_rule2 = {.criteria     = LXW_FILTER_CRITERIA_EQUAL_TO,
+ *                                     .value_string = "South"};
+ *
+ *     worksheet_filter_column2(worksheet, 0, &filter_rule1, &filter_rule2, LXW_FILTER_OR);
+ * @endcode
+ *
+ * @image html autofilter5.png
+ *
+ * The rules and criteria are explained in more detail in @ref
+ * ww_autofilters_criteria in @ref working_with_autofilters.
+ *
+ * The `col` parameter is a zero indexed column number and must refer to a
+ * column in an existing autofilter created with `worksheet_autofilter()`.
+ *
+ * The `and_or` parameter is either "and (LXW_FILTER_AND)" or "or  (LXW_FILTER_OR)".
+ *
+ * It isn't sufficient to just specify the filter condition. You must also
+ * hide any rows that don't match the filter condition. See @ref
+ * ww_autofilters_data for more details.
+ */
+lxw_error worksheet_filter_column2(lxw_worksheet *worksheet, lxw_col_t col,
+                                   lxw_filter_rule *rule1,
+                                   lxw_filter_rule *rule2, uint8_t and_or);
+/**
+ * @brief Write multiple string filters to an autofilter column.
+ *
+ * @param worksheet Pointer to a lxw_worksheet instance to be updated.
+ * @param col       The column in the autofilter that the rules applies to.
+ * @param list      Array of strings to filter on.
+ *
+ * @return A #lxw_error code.
+ *
+ * The `worksheet_filter_column_list()` function can be used specify multiple
+ * string matching criteria. This is a newer type of filter introduced in
+ * Excel 2007. Prior to that it was only possible to have either 1 or 2 filter
+ * conditions, such as the ones used by `worksheet_filter_column()` and
+ * `worksheet_filter_column2()`.
+ *
+ * As an example, consider a column that contains data for the months of the
+ * year. The `%worksheet_filter_list()` function can be used to filter out
+ * data rows for different months:
+ *
+ * @code
+ *     char* list[] = {"March", "April", "May", NULL};
+ *
+ *     worksheet_filter_list(worksheet, 0, list);
+ * @endcode
+ *
+ * @image html autofilter2.png
+ *
+ *
+ * To filter blanks as part of the list use `Blanks` as a list item:
+ *
+ * @code
+ *     char* list[] = {"March", "April", "May", "Blanks", NULL};
+ *
+ *     worksheet_filter_list(worksheet, 0, list);
+ * @endcode
+ *
+ * It isn't sufficient to just specify the filter condition. You must also
+ * hide any rows that don't match the filter condition. See @ref
+ * ww_autofilters_data for more details.
+ */
+lxw_error worksheet_filter_list(lxw_worksheet *worksheet, lxw_col_t col,
+                                char **list);
 
 /**
  * @brief Add a data validation to a cell.
@@ -4609,13 +4862,14 @@ void worksheet_fit_to_pages(lxw_worksheet *worksheet, uint16_t width,
                             uint16_t height);
 
 /**
- * @brief Set the start page number when printing.
+ * @brief Set the start/first page number when printing.
  *
  * @param worksheet  Pointer to a lxw_worksheet instance to be updated.
- * @param start_page Starting page number.
+ * @param start_page Page number of the starting page when printing.
  *
- * The `%worksheet_set_start_page()` function is used to set the number of
- * the starting page when the worksheet is printed out:
+ * The `%worksheet_set_start_page()` function is used to set the number number
+ * of the first page when the worksheet is printed out. It is the same as the
+ * "First Page Number" option in Excel:
  *
  * @code
  *     // Start print from page 2.
@@ -5106,6 +5360,8 @@ STATIC void _worksheet_write_data_validations(lxw_worksheet *self);
 
 STATIC double _pixels_to_height(double pixels);
 STATIC double _pixels_to_width(double pixels);
+
+STATIC void _worksheet_write_auto_filter(lxw_worksheet *worksheet);
 #endif /* TESTING */
 
 /* *INDENT-OFF* */
