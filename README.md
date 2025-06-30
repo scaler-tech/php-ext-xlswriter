@@ -70,5 +70,3 @@ Respect and thanks to the original author and contributors for their excellent w
 ## License
 
 BSD License
-
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fviest%2Fphp-ext-xlswriter.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fviest%2Fphp-ext-xlswriter?ref=badge_large)
