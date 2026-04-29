@@ -1,0 +1,14 @@
+{
+  "private": true,
+  "engines": {
+    "node": ">=25"
+  },
+  "scripts": {
+    "docs:build": "vitepress build .",
+    "docs:preview": "vitepress preview .",
+    "docs:serve": "vitepress dev ."
+  },
+  "devDependencies": {
+    "vitepress": "2.0.0-alpha.17"
+  }
+}
