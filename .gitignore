@@ -1,4 +1,7 @@
 .deps
+node_modules
+_site
+docs/_site
 *.lo
 *.la
 .libs
