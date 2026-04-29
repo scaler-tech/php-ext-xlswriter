@@ -2,7 +2,7 @@
 
 Please refer to the image below. PHPExcel has been unable to work properly for memory reasons at 40,000 and 100000 points, but it can be resolved by modifying the ini configuration, but the time may take longer to complete the work;
 
-![](.gitbook/assets/performance_comparison.png)
+![](assets/performance_comparison.png)
 
 
 

@@ -1,6 +1,6 @@
 # Histogram
 
-![](../../.gitbook/assets/chart_simple.png)
+![](../../assets/chart_simple.png)
 
 ```php
 $config = ['path' => './tests'];

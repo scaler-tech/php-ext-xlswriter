@@ -2,7 +2,7 @@
 
  ## 2D ring chart
 
-![](../../.gitbook/assets/chart_doughnut1.png)
+![](../../assets/chart_doughnut1.png)
 
 ```php
 <?php declare(strict_types = 1);

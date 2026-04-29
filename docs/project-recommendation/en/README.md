@@ -39,7 +39,7 @@ EasySwoole is a resident memory-based distributed PHP framework based on Swoole 
 
 ## [Swoole](https://www.swoole.co.uk/)
  
-![](../../.gitbook/assets/project/swoole.png)
+![](../../assets/project/swoole.png)
  
  Compared with other async programming frameworks or softwares such as Nginx, Tornado, Node.js, Swoole has the built-in PHP coroutine and async support, multiple threads I/O modules. Developers can use sync or async, coroutine API to write the applications or create thousands of light weight corotuines within one PHP process. Swoole PHP network framework enhances the efficiency of R&D team, enable them to focus on the development of innovative products.
  

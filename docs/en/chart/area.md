@@ -1,6 +1,6 @@
 # Area map
 
-![](../../.gitbook/assets/chart_area1.png)
+![](../../assets/chart_area1.png)
 
 ```php
 $config = ['path' => './tests'];
