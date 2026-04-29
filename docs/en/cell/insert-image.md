@@ -26,7 +26,7 @@ insertImage(int $row, int $column, string $localImagePath[, double $widthScale, 
 
 > Scale the image axis; the default is 1, keeping the original height of the image; when the value is 0.5, the image height is 1/2 of the original image;
 
-###example
+### Example
 
 ```php
 $excel = new \Vtiful\Kernel\Excel($config);

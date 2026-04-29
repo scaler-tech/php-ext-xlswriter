@@ -1,4 +1,4 @@
-# Merge Cells
+# Merge cells
 
 ### **Function Prototype**
 
@@ -18,10 +18,18 @@ mergeCells(string $scope, string $data[, resource $formatHandler]): self
 
 > cell style
 
-###example
+### Horizontal merge
 
 ```php
 $excel->fileName("test.xlsx")
-   ->mergeCells('A1:C1', 'Merge cells')
-   ->output();
+    ->mergeCells('A1:C1', 'Merge cells')
+    ->output();
+```
+
+### Vertical merge
+
+```php
+$excel->fileName("test.xlsx")
+    ->mergeCells('A1:A3', 'Merge cells')
+    ->output();
 ```

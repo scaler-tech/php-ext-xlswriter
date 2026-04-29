@@ -21,4 +21,6 @@ $filePath = $excel->fileName('tutorial.xlsx')
     ->output();
 ```
 
+![Greater than constraint example](criteria-greater-than.png)
+
 The same pattern applies to the other one-sided criteria — `CRITERIA_LESS_THAN`, `CRITERIA_GREATER_THAN_OR_EQUAL_TO`, `CRITERIA_LESS_THAN_OR_EQUAL_TO`, `CRITERIA_EQUAL_TO`, `CRITERIA_NOT_EQUAL_TO` — each used together with `valueNumber()`, `valueFormula()` or `valueDatetime()`.

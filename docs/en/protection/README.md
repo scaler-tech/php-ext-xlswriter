@@ -16,3 +16,19 @@ Topics:
 
 * [Password protection](password.md)
 * [Unlock cells](unlock.md)
+
+## Example
+
+```php
+$config = ['path' => './tests'];
+$excel  = new \Vtiful\Kernel\Excel($config);
+
+$excel->fileName('tutorial.xlsx')
+    ->header(['name', 'age'])
+    ->data([
+        ['viest', 21],
+        ['wjx',   21]
+    ])
+    ->protection('viest')
+    ->output();
+```

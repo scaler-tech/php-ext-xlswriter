@@ -6,7 +6,7 @@
 Border(int $borderStyle): \Vtiful\Kernel\Format
 ```
 
-###example
+### Example
 
 ```php
 $config = [

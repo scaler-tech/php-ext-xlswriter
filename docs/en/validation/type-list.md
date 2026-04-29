@@ -18,3 +18,5 @@ $excel->fileName('tutorial.xlsx')
 ```
 
 The drop-down items can also be sourced from a worksheet range with `TYPE_LIST_FORMULA` plus `valueFormula('=$E$1:$E$5')`.
+
+![Drop-down list example](type-list.png)

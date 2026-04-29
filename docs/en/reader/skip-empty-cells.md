@@ -1,6 +1,6 @@
 # Ignore blank cells
 
-##Test data preparation
+## Test data preparation
 
 ```php
 $config = ['path' => './tests'];
@@ -8,12 +8,12 @@ $excel  = new \Vtiful\Kernel\Excel($config);
 
 // Write test data
 $filePath = $excel->fileName('tutorial.xlsx')
-    ->header(['', 'Cost'])
-    ->data([
-        [],
-        ['viest', '']
-    ])
-    ->output();
+    ->header(['', 'Cost'])
+    ->data([
+        [],
+        ['viest', '']
+    ])
+    ->output();
 ```
 
 ## Example 1
@@ -23,8 +23,8 @@ $filePath = $excel->fileName('tutorial.xlsx')
 // Use \Vtiful\Kernel\Excel::SKIP_EMPTY_CELLS to ignore blank cells
 
 $data = $excel->openFile('tutorial.xlsx')
-    ->openSheet('Sheet1', \Vtiful\Kernel\Excel::SKIP_EMPTY_CELLS)
-    ->getSheetData();
+    ->openSheet('Sheet1', \Vtiful\Kernel\Excel::SKIP_EMPTY_CELLS)
+    ->getSheetData();
 ```
 
 ## Example 2
@@ -34,9 +34,9 @@ $data = $excel->openFile('tutorial.xlsx')
 // Use \Vtiful\Kernel\Excel::SKIP_EMPTY_CELLS to ignore blank cells
 
 $data = $excel->openFile('tutorial.xlsx')
-    ->openSheet('Sheet1', \Vtiful\Kernel\Excel::SKIP_EMPTY_CELLS);
+    ->openSheet('Sheet1', \Vtiful\Kernel\Excel::SKIP_EMPTY_CELLS);
 
-while ($data = $excel->nextRow()) {
-    var_dump($data);
+while (($data = $excel->nextRow()) !== null) {
+    var_dump($data);
 }
 ```

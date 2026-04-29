@@ -10,7 +10,7 @@ fontSize(double $size);
 
 > cell font size
 
-###example
+### Example
 
 ```php
 $config = [

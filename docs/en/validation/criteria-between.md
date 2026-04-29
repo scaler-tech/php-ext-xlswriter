@@ -25,6 +25,8 @@ $filePath = $excel->fileName('tutorial.xlsx')
     ->output();
 ```
 
+![Range constraint example](criteria-between.png)
+
 ## Bounds taken from cells
 
 ### Example

@@ -1,6 +1,6 @@
 # Ignore blank lines
 
-##Test data preparation
+## Test data preparation
 
 ```php
 $config = ['path' => './tests'];
@@ -9,11 +9,11 @@ $excel  = new \Vtiful\Kernel\Excel($config);
 // Write test data
 $filePath = $excel->fileName('tutorial.xlsx')
     ->header(['', 'Cost'])
-    ->data([
-        [],
-        ['viest', '']
-    ])
-    ->output();
+    ->data([
+        [],
+        ['viest', '']
+    ])
+    ->output();
 ```
 
 ## Example 1
@@ -31,12 +31,12 @@ $data = $excel->openFile('tutorial.xlsx')
 
 ```php
 // cursor mode
-// Use \Vtiful\Kernel\Excel::SKIP_EMPTY_CELLS to ignore blank lines
+// Use \Vtiful\Kernel\Excel::SKIP_EMPTY_ROW to ignore blank lines
 
 $data = $excel->openFile('tutorial.xlsx')
     ->openSheet('Sheet1', \Vtiful\Kernel\Excel::SKIP_EMPTY_ROW);
 
-while ($data = $excel->nextRow()) {
-    var_dump($data);
+while (($data = $excel->nextRow()) !== null) {
+    var_dump($data);
 }
 ```

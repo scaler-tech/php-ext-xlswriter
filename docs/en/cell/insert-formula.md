@@ -22,7 +22,7 @@ insertFormula(int $row, int $column, string $formula [, resource $formatHandler]
 
 > cell style
 
-###example
+### Example
 
 ```php
 $excel = new \Vtiful\Kernel\Excel($config);

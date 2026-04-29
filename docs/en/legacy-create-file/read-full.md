@@ -1,11 +1,11 @@
 # Read file (full amount)
 
-* The file is not supported for the `windows` system.
-* Extended version is greater than or equal to `1.2.7`;
+* Reader support is available on Windows in version `1.3.4.1` and later.
+* The extension version must be `1.2.7` or later.
 
 ### Compile
 
-Add `--enable-reader` when configure
+Add `--enable-reader` when compiling from source.
 
 ```bash
 ./configure --enable-reader
@@ -13,7 +13,7 @@ Add `--enable-reader` when configure
 
 ### Example
 
-```bash
+```php
 $config   = ['path' => './tests'];
 $excel    = new \Vtiful\Kernel\Excel($config);
 
@@ -25,8 +25,6 @@ $data = $excel->openFile('tutorial.xlsx')
     ->openSheet()
     ->getSheetData();
     
-var_dump($data)
+var_dump($data);
 ```
-
-
 

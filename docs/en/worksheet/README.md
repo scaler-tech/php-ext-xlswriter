@@ -6,6 +6,7 @@ Pages in this section:
 
 * [Create worksheet](create.md)
 * [Switch worksheet](switch.md)
+* [Check worksheet existence](sheet_exist.md)
 * [Gridlines](gridlines.md)
 * [Zoom](zoom.md)
 * [Hide current worksheet](hide.md)

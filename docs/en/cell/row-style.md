@@ -18,7 +18,7 @@ setRow(string $range, double $height [, resource $formatHandler]);
 
 > cell style
 
-###example
+### Example
 
 ```php
 $config = ['path' => './tests'];

@@ -26,7 +26,7 @@ insertText(int $row, int $column, string|int|double $data[, string $format, reso
 
 > cell style
 
-###example
+### Example
 
 ```php
 $excel = new \Vtiful\Kernel\Excel($config);

@@ -10,3 +10,4 @@ This section covers:
 * [Alpine](alpine.md)
 * [Ubuntu](ubuntu.md)
 * [Windows](windows.md)
+* [Docker multi-stage build](docker.md)

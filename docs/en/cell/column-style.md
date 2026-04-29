@@ -18,7 +18,7 @@ setColumn(string $range, double $width [, resource $formatHandler]);
 
 > cell style
 
-###example
+### Example
 
 ```php
 $config = ['path' => './tests'];

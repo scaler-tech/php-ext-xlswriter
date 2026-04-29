@@ -10,7 +10,7 @@ fontColor(int $color)
 
 > RGB hexadecimal value
 
-###example
+### Example
 
 ```php
 $config     = ['path' => './tests'];

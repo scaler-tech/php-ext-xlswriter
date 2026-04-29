@@ -20,7 +20,7 @@ function(int $row, int $cell, string|double|int $data)
 
 At the end of each line, `callback call` will be appended and pass `XLSX_ROW_END` to the end of the current line.
 
-##example
+## Example
 
 ```php
 $config = ['path' => './tests'];

@@ -3,7 +3,7 @@
 ### **Function Prototype**
 
 ```php
-insertUrl(int $row, int $column, string $url[, resource $formatHandler])
+insertUrl(int $row, int $column, string $url[, ?string $text, ?string $toolTip, resource $formatHandler]): self
 ```
 
 #### **int $row**
@@ -18,26 +18,34 @@ insertUrl(int $row, int $column, string $url[, resource $formatHandler])
 
 > link address
 
+#### **string $text**
+
+> Optional link text
+
+#### **string $toolTip**
+
+> Optional link tooltip
+
 #### **resource $formatHandler**
 
-> cell style
+> link style
 
-###example
+### Example
 
 ```php
 $excel = new \Vtiful\Kernel\Excel($config);
 
 $urlFile = $excel->fileName("free.xlsx")
-     ->header(['url']);
+    ->header(['url']);
 
-$fileHandle = $fileObject->getHandle();
+$fileHandle = $urlFile->getHandle();
 
 $format   = new \Vtiful\Kernel\Format($fileHandle);
 $urlStyle = $format->bold()
-     ->underline(Format::UNDERLINE_SINGLE)
-     ->toResource();
+    ->underline(\Vtiful\Kernel\Format::UNDERLINE_SINGLE)
+    ->toResource();
 
-$urlFile->insertUrl(1, 0, 'https://github.com', $urlStyle);
+$urlFile->insertUrl(1, 0, 'https://github.com', null, null, $urlStyle);
 
-$textFile->output();
+$urlFile->output();
 ```
