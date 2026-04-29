@@ -1,5 +1,5 @@
 import { defineConfig } from 'vitepress';
-import sidebar from './sidebar.mjs';
+import sidebar from '../sidebar.mjs';
 
 function rewriteReadmeToIndex(id) {
   if (id === 'README.md') {
